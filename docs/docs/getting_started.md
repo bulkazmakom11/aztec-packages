@@ -43,7 +43,7 @@ You can have some more control over the sandbox by installing it manually throug
 
 Now you have a development network running,, so you're ready to start coding your first app with Aztec.nr and Aztec.js!
 
-To follow the series of tutorials, start with the private voting contract [here](./tutorials/private_voting_contract.md).
+To follow the series of tutorials, start with the private voting contract [here](./tutorials/private_voting_contract.mdx).
 
 If you want to just keep learning, you can read about the high level architecture on the [Core Components page](./aztec/concepts/state_model/index.md) and [the lifecycle of a transaction](./aztec/concepts/transactions.md).
 
