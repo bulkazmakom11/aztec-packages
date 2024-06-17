@@ -1,5 +1,6 @@
 import { type AccountWalletWithSecretKey, type AztecNode, Fr, L1EventPayload, TaggedLog } from '@aztec/aztec.js';
 import { deriveMasterIncomingViewingSecretKey } from '@aztec/circuits.js';
+import { EventSelector } from '@aztec/foundation/abi';
 import { makeTuple } from '@aztec/foundation/array';
 import { type Tuple } from '@aztec/foundation/serialize';
 import { type ExampleEvent0, type ExampleEvent1, TestLogContract } from '@aztec/noir-contracts.js';
@@ -32,7 +33,7 @@ describe('Logs', () => {
   describe('functionality around emitting an encrypted log', () => {
     it('emits a generic encrypted log and checks for correctness', async () => {
       const randomness = Fr.random();
-      const eventTypeId = Fr.random();
+      const eventTypeId = EventSelector.random();
       const preimage = makeTuple(6, Fr.random);
 
       const tx = await testLogContract.methods.emit_encrypted_log(randomness, eventTypeId, preimage).send().wait();
@@ -74,7 +75,7 @@ describe('Logs', () => {
       expect(decryptedLog0?.payload.contractAddress).toStrictEqual(testLogContract.address);
       expect(decryptedLog0?.payload.randomness).toStrictEqual(randomness[0]);
       expect(decryptedLog0?.payload.eventTypeId).toStrictEqual(
-        new Fr(0x00000000000000000000000000000000000000000000000000000000aa533f60),
+        EventSelector.fromField(new Fr(0x00000000000000000000000000000000000000000000000000000000aa533f60)),
       );
 
       // We decode our event into the event type
@@ -97,7 +98,7 @@ describe('Logs', () => {
       expect(decryptedLog1?.payload.contractAddress).toStrictEqual(testLogContract.address);
       expect(decryptedLog1?.payload.randomness).toStrictEqual(randomness[1]);
       expect(decryptedLog1?.payload.eventTypeId).toStrictEqual(
-        new Fr(0x00000000000000000000000000000000000000000000000000000000d1be0447),
+        EventSelector.fromField(new Fr(0x00000000000000000000000000000000000000000000000000000000d1be0447)),
       );
 
       // We check our second event, which is a different type

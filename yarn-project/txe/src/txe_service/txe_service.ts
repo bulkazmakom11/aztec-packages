@@ -10,6 +10,7 @@ import {
   getContractInstanceFromDeployParams,
 } from '@aztec/circuits.js';
 import { computePublicDataTreeLeafSlot } from '@aztec/circuits.js/hash';
+import { NoteSelector } from '@aztec/foundation/abi';
 import { AztecAddress } from '@aztec/foundation/aztec-address';
 import { type Logger } from '@aztec/foundation/log';
 import { KeyStore } from '@aztec/key-store';
@@ -356,7 +357,7 @@ export class TXEService {
   ) {
     this.typedOracle.notifyCreatedNote(
       fromSingle(storageSlot),
-      fromSingle(noteTypeId),
+      NoteSelector.fromField(fromSingle(noteTypeId)),
       fromArray(note),
       fromSingle(innerNoteHash),
       fromSingle(counter).toNumber(),
@@ -462,7 +463,7 @@ export class TXEService {
     const encLog = this.typedOracle.computeEncryptedNoteLog(
       AztecAddress.fromString(fromSingle(contractAddress).toString()),
       Fr.fromString(fromSingle(storageSlot).toString()),
-      Fr.fromString(fromSingle(noteTypeId).toString()),
+      NoteSelector.fromField(Fr.fromString(fromSingle(noteTypeId).toString())),
       ovKeys,
       ivpkM,
       fromArray(preimage),
