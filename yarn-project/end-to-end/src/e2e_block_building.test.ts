@@ -17,8 +17,6 @@ import { StatefulTestContractArtifact } from '@aztec/noir-contracts.js';
 import { TestContract } from '@aztec/noir-contracts.js/Test';
 import { TokenContract } from '@aztec/noir-contracts.js/Token';
 
-import 'jest-extended';
-
 import { TaggedLog } from '../../circuit-types/src/logs/l1_payload/tagged_log.js';
 import { DUPLICATE_NULLIFIER_ERROR } from './fixtures/fixtures.js';
 import { setup } from './fixtures/utils.js';

@@ -42,7 +42,7 @@ describe('avm nullifier caching', () => {
       const nullifier = new Fr(2);
       const storedLeafIndex = BigInt(420);
 
-      commitmentsDb.getNullifierIndex.mockResolvedValue(Promise.resolve(storedLeafIndex));
+      commitmentsDb.getNullifierIndex.mockResolvedValue(storedLeafIndex);
 
       const [exists, isPending, gotIndex] = await nullifiers.checkExists(contractAddress, nullifier);
       // exists (in host), not pending, tree index retrieved from host
@@ -111,7 +111,7 @@ describe('avm nullifier caching', () => {
       const storedLeafIndex = BigInt(420);
 
       // Nullifier exists in host
-      commitmentsDb.getNullifierIndex.mockResolvedValue(Promise.resolve(storedLeafIndex));
+      commitmentsDb.getNullifierIndex.mockResolvedValue(storedLeafIndex);
       // Can't append to cache
       await expect(nullifiers.append(contractAddress, nullifier)).rejects.toThrow(
         `Nullifier ${nullifier} at contract ${contractAddress} already exists in parent cache or host.`,

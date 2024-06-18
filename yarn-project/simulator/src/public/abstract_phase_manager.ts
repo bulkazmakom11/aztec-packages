@@ -320,7 +320,7 @@ export abstract class AbstractPhaseManager {
           calldata: result.calldata,
           bytecode: result.bytecode!,
           inputs: privateInputs,
-          avmHints: result.avmHints,
+          avmHints: result.avmCircuitHints,
         };
         provingInformationList.push(publicProvingInformation);
 

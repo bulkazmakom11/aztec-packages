@@ -62,7 +62,7 @@ export class AvmExecutionEnvironment {
       /*sender=*/ this.address,
       this.feePerL2Gas,
       this.feePerDaGas,
-      this.contractCallDepth,
+      this.contractCallDepth.add(Fr.ONE),
       this.header,
       this.globals,
       isStaticCall,
