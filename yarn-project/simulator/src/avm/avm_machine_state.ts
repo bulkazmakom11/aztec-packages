@@ -1,4 +1,4 @@
-import { type Fr } from '@aztec/circuits.js';
+import { FIXED_AVM_STARTUP_L2_GAS, type Fr } from '@aztec/circuits.js';
 
 import { type Gas, GasDimensions } from './avm_gas.js';
 import { TaggedMemory } from './avm_memory_types.js';
@@ -46,6 +46,7 @@ export class AvmMachineState {
   constructor(gasLeftOrL2GasLeft: Gas | number, daGasLeft?: number) {
     if (typeof gasLeftOrL2GasLeft === 'object') {
       ({ l2Gas: this.l2GasLeft, daGas: this.daGasLeft } = gasLeftOrL2GasLeft);
+      this.l2GasLeft -= FIXED_AVM_STARTUP_L2_GAS;
     } else {
       this.l2GasLeft = gasLeftOrL2GasLeft!;
       this.daGasLeft = daGasLeft!;
