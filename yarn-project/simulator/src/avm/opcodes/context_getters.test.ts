@@ -1,3 +1,5 @@
+import { FIXED_AVM_STARTUP_L2_GAS } from '@aztec/circuits.js';
+
 import { initContext, initMachineState } from '../fixtures/index.js';
 import { DAGasLeft, L2GasLeft } from './context_getters.js';
 
@@ -25,7 +27,7 @@ describe.each([
     await instruction.execute(context);
 
     const actual = context.machineState.memory.get(0).toNumber();
-    const expected = key === 'l2GasLeft' ? value - 10 : value; // l2gascost decreases when it's executed
+    const expected = key === 'l2GasLeft' ? value - 10 - FIXED_AVM_STARTUP_L2_GAS : value; // l2gascost decreases when it's executed
     expect(actual).toEqual(expected);
   });
 });

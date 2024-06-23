@@ -46,11 +46,11 @@ export class AvmMachineState {
   constructor(gasLeftOrL2GasLeft: Gas | number, daGasLeft?: number) {
     if (typeof gasLeftOrL2GasLeft === 'object') {
       ({ l2Gas: this.l2GasLeft, daGas: this.daGasLeft } = gasLeftOrL2GasLeft);
-      this.l2GasLeft -= FIXED_AVM_STARTUP_L2_GAS;
     } else {
       this.l2GasLeft = gasLeftOrL2GasLeft!;
       this.daGasLeft = daGasLeft!;
     }
+    this.consumeGas({ l2Gas: FIXED_AVM_STARTUP_L2_GAS });
   }
 
   public get gasLeft(): Gas {

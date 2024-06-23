@@ -1,4 +1,5 @@
 import { UnencryptedL2Log } from '@aztec/circuit-types';
+import { FIXED_AVM_STARTUP_L2_GAS } from '@aztec/circuits.js';
 import { Grumpkin } from '@aztec/circuits.js/barretenberg';
 import { computeVarArgsHash } from '@aztec/circuits.js/hash';
 import { EventSelector, FunctionSelector } from '@aztec/foundation/abi';
@@ -10,7 +11,6 @@ import { type Fieldable } from '@aztec/foundation/serialize';
 import { jest } from '@jest/globals';
 
 import { isAvmBytecode, markBytecodeAsAvm } from '../public/transitional_adaptors.js';
-import { AvmMachineState } from './avm_machine_state.js';
 import { type MemoryValue, TypeTag, type Uint8 } from './avm_memory_types.js';
 import { AvmSimulator } from './avm_simulator.js';
 import {
@@ -45,7 +45,7 @@ describe('AVM simulator: injected bytecode', () => {
 
   it('Should execute bytecode that performs basic addition', async () => {
     const context = initContext({ env: initExecutionEnvironment({ calldata }) });
-    const { l2GasLeft: initialL2GasLeft } = AvmMachineState.fromState(context.machineState);
+    const { l2Gas: initialL2GasLeft } = context.machineState.gasLeft;
     const results = await new AvmSimulator(context).executeBytecode(markBytecodeAsAvm(bytecode));
 
     expect(results.reverted).toBe(false);
@@ -56,7 +56,7 @@ describe('AVM simulator: injected bytecode', () => {
   it('Should halt if runs out of gas', async () => {
     const context = initContext({
       env: initExecutionEnvironment({ calldata }),
-      machineState: initMachineState({ l2GasLeft: 5 }),
+      machineState: initMachineState({ l2GasLeft: 5 + FIXED_AVM_STARTUP_L2_GAS }),
     });
 
     const results = await new AvmSimulator(context).executeBytecode(markBytecodeAsAvm(bytecode));
