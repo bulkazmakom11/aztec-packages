@@ -1,5 +1,8 @@
 import { FunctionSelector, Gas } from '@aztec/circuits.js';
 import { padArrayEnd } from '@aztec/foundation/collection';
+import { createDebugLogger } from '@aztec/foundation/log';
+
+import { randomInt } from 'crypto';
 
 import { convertAvmResultsToPxResult, createPublicExecution } from '../../public/transitional_adaptors.js';
 import type { AvmContext } from '../avm_context.js';
@@ -91,14 +94,19 @@ abstract class ExternalCall extends Instruction {
     );
     const startSideEffectCounter = nestedContext.persistableState.trace.accessCounter;
 
-    const oldStyleExecution = createPublicExecution(startSideEffectCounter, nestedContext.environment, calldata);
-    const simulator = new AvmSimulator(nestedContext);
-    const nestedCallResults: AvmContractCallResults = await simulator.execute();
-    const functionName =
+    let functionName =
       (await nestedContext.persistableState.hostStorage.contractsDb.getDebugFunctionName(
         nestedContext.environment.address,
         nestedContext.environment.temporaryFunctionSelector,
       )) ?? `${nestedContext.environment.address}:${nestedContext.environment.temporaryFunctionSelector}`;
+    // add an identifier to the function name
+    functionName = `[${randomInt(1000000000)}] ${functionName}`;
+    createDebugLogger('aztec:simulator:external_calls').verbose(`[AVM] Calling nested function ${functionName}`);
+
+    const oldStyleExecution = createPublicExecution(startSideEffectCounter, nestedContext.environment, calldata);
+    const simulator = new AvmSimulator(nestedContext);
+    const nestedCallResults: AvmContractCallResults = await simulator.execute();
+
     const pxResults = convertAvmResultsToPxResult(
       nestedCallResults,
       startSideEffectCounter,
