@@ -1,4 +1,3 @@
-import { FIXED_AVM_STARTUP_L2_GAS } from '@aztec/circuits.js';
 import { Fr } from '@aztec/foundation/fields';
 
 import { jest } from '@jest/globals';
@@ -218,7 +217,7 @@ describe('External Calls', () => {
 
     it('Should fail if a static call attempts to touch storage', async () => {
       const gasOffset = 0;
-      const gas = [new Field(FIXED_AVM_STARTUP_L2_GAS), new Field(0n), new Field(0n)];
+      const gas = [new Field(0n), new Field(0n), new Field(0n)];
       const addrOffset = 10;
       const addr = new Field(123456n);
       const argsOffset = 20;

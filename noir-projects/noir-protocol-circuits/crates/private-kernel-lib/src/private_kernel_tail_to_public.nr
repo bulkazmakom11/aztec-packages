@@ -78,7 +78,7 @@ mod tests {
         MAX_NOTE_HASH_READ_REQUESTS_PER_TX, MAX_NEW_NOTE_HASHES_PER_TX, MAX_NEW_NULLIFIERS_PER_TX,
         MAX_NULLIFIER_READ_REQUESTS_PER_TX, MAX_KEY_VALIDATION_REQUESTS_PER_TX, DA_BYTES_PER_FIELD,
         DA_GAS_PER_BYTE, MAX_NOTE_ENCRYPTED_LOGS_PER_TX, GENERATOR_INDEX__TSK_M, L2_GAS_PER_NULLIFIER,
-        L2_GAS_PER_NOTE_HASH, L2_GAS_PER_LOG_BYTE
+        L2_GAS_PER_NOTE_HASH, L2_GAS_PER_LOG_BYTE, FIXED_AVM_STARTUP_L2_GAS
     };
     use dep::types::{
         abis::{
@@ -303,7 +303,7 @@ mod tests {
         assert_eq(
             public_inputs.end_non_revertible.gas_used, Gas::new(
             3 * DA_BYTES_PER_FIELD * DA_GAS_PER_BYTE,
-            3 * L2_GAS_PER_NULLIFIER
+            FIXED_AVM_STARTUP_L2_GAS + 3 * L2_GAS_PER_NULLIFIER
         )
             + Gas::tx_overhead()
         );
@@ -367,7 +367,8 @@ mod tests {
         assert_eq(
             public_inputs.end_non_revertible.gas_used, Gas::new(
             (3 * DA_BYTES_PER_FIELD + non_revertible_logs_len) * DA_GAS_PER_BYTE,
-            L2_GAS_PER_NULLIFIER
+            FIXED_AVM_STARTUP_L2_GAS
+            + L2_GAS_PER_NULLIFIER
             + 2 * L2_GAS_PER_NOTE_HASH
             + non_revertible_logs_len * L2_GAS_PER_LOG_BYTE
         )
@@ -410,11 +411,32 @@ mod tests {
 
         let expected_non_revertible_gas_used = Gas::tx_overhead() + Gas::new(
                 DA_BYTES_PER_FIELD * DA_GAS_PER_BYTE * 1,
-                L2_GAS_PER_NULLIFIER * 1
+                L2_GAS_PER_NULLIFIER * 1 + FIXED_AVM_STARTUP_L2_GAS
             );
 
-        println(public_inputs.end_non_revertible.gas_used);
-        println(expected_non_revertible_gas_used);
+        assert_eq(public_inputs.end_non_revertible.gas_used, expected_non_revertible_gas_used);
+    }
+
+    #[test]
+    unconstrained fn enqueued_public_calls_consume_startup_gas() {
+        let mut builder = PrivateKernelTailToPublicInputsBuilder::new();
+        // add an extra non-revertible call
+        builder.previous_kernel.push_public_call_request(42, false);
+        builder.previous_kernel.end_setup();
+        // add some revertible calls
+        builder.previous_kernel.push_public_call_request(42, false);
+        builder.previous_kernel.push_public_call_request(42, false);
+        builder.previous_kernel.push_public_call_request(42, false);
+        let public_inputs = builder.execute();
+
+        let expected_revertible_gas_used = Gas::new(0, 3 * FIXED_AVM_STARTUP_L2_GAS);
+        assert_eq(public_inputs.end.gas_used, expected_revertible_gas_used);
+
+        let expected_non_revertible_gas_used = Gas::tx_overhead() + Gas::new(
+                DA_BYTES_PER_FIELD * DA_GAS_PER_BYTE * 1,
+                L2_GAS_PER_NULLIFIER * 1 + 2 * FIXED_AVM_STARTUP_L2_GAS
+            );
+
         assert_eq(public_inputs.end_non_revertible.gas_used, expected_non_revertible_gas_used);
     }
 
@@ -433,7 +455,7 @@ mod tests {
         assert_eq(
             Gas::tx_overhead() + Gas::new(
                 3 * DA_BYTES_PER_FIELD * DA_GAS_PER_BYTE,
-                1 * L2_GAS_PER_NULLIFIER
+                FIXED_AVM_STARTUP_L2_GAS + 1 * L2_GAS_PER_NULLIFIER
             ), public_inputs.end_non_revertible.gas_used
         );
     }
@@ -455,7 +477,7 @@ mod tests {
         assert_eq(
             Gas::tx_overhead() + Gas::new(
                 (1 * DA_BYTES_PER_FIELD + 12) * DA_GAS_PER_BYTE ,
-                1 * L2_GAS_PER_NULLIFIER + 12 * L2_GAS_PER_LOG_BYTE
+                FIXED_AVM_STARTUP_L2_GAS + 1 * L2_GAS_PER_NULLIFIER + 12 * L2_GAS_PER_LOG_BYTE
             ), public_inputs.end_non_revertible.gas_used
         );
     }

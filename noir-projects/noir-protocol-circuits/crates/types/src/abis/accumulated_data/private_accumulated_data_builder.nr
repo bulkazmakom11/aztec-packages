@@ -16,7 +16,7 @@ use crate::{
     MAX_PUBLIC_CALL_STACK_LENGTH_PER_TX, MAX_NEW_L2_TO_L1_MSGS_PER_TX,
     MAX_PUBLIC_DATA_UPDATE_REQUESTS_PER_TX, MAX_ENCRYPTED_LOGS_PER_TX, MAX_UNENCRYPTED_LOGS_PER_TX,
     MAX_NOTE_ENCRYPTED_LOGS_PER_TX, DA_BYTES_PER_FIELD, DA_GAS_PER_BYTE, L2_GAS_PER_NULLIFIER,
-    L2_GAS_PER_NOTE_HASH, L2_GAS_PER_LOG_BYTE
+    L2_GAS_PER_NOTE_HASH, L2_GAS_PER_LOG_BYTE, FIXED_AVM_STARTUP_L2_GAS
 },
     messaging::l2_to_l1_message::ScopedL2ToL1Message, traits::{Empty, is_empty}
 };
@@ -197,8 +197,14 @@ impl PrivateAccumulatedDataBuilder {
             let call_stack_item = self.public_call_stack.storage[i];
             if call_stack_item.start_side_effect_counter < min_revertible_side_effect_counter {
                 non_revertible_builder.public_call_stack.push(call_stack_item);
+                if !is_empty(call_stack_item) {
+                    non_revertible_l2_gas_used += FIXED_AVM_STARTUP_L2_GAS;
+                }
             } else {
                 revertible_builder.public_call_stack.push(call_stack_item);
+                if !is_empty(call_stack_item) {
+                    revertible_l2_gas_used += FIXED_AVM_STARTUP_L2_GAS;
+                }
             }
         }
 

@@ -1,5 +1,4 @@
 import { UnencryptedL2Log } from '@aztec/circuit-types';
-import { FIXED_AVM_STARTUP_L2_GAS } from '@aztec/circuits.js';
 import { Grumpkin } from '@aztec/circuits.js/barretenberg';
 import { computeVarArgsHash } from '@aztec/circuits.js/hash';
 import { EventSelector, FunctionSelector } from '@aztec/foundation/abi';
@@ -56,7 +55,7 @@ describe('AVM simulator: injected bytecode', () => {
   it('Should halt if runs out of gas', async () => {
     const context = initContext({
       env: initExecutionEnvironment({ calldata }),
-      machineState: initMachineState({ l2GasLeft: 5 + FIXED_AVM_STARTUP_L2_GAS }),
+      machineState: initMachineState({ l2GasLeft: 5 }),
     });
 
     const results = await new AvmSimulator(context).executeBytecode(markBytecodeAsAvm(bytecode));

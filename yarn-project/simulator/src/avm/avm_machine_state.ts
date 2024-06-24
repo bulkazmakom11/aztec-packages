@@ -1,4 +1,4 @@
-import { FIXED_AVM_STARTUP_L2_GAS, type Fr } from '@aztec/circuits.js';
+import { type Fr } from '@aztec/circuits.js';
 
 import { type Gas, GasDimensions } from './avm_gas.js';
 import { TaggedMemory } from './avm_memory_types.js';
@@ -50,7 +50,6 @@ export class AvmMachineState {
       this.l2GasLeft = gasLeftOrL2GasLeft!;
       this.daGasLeft = daGasLeft!;
     }
-    this.consumeGas({ l2Gas: FIXED_AVM_STARTUP_L2_GAS });
   }
 
   public get gasLeft(): Gas {
