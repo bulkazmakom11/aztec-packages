@@ -1,5 +1,37 @@
 # Changelog
 
+## [0.44.0](https://github.com/AztecProtocol/aztec-packages/compare/barretenberg-v0.43.0...barretenberg-v0.44.0) (2024-06-24)
+
+
+### Features
+
+* Added prove_output_all flow for honk ([#6869](https://github.com/AztecProtocol/aztec-packages/issues/6869)) ([7bd7c66](https://github.com/AztecProtocol/aztec-packages/commit/7bd7c66de6adb1f703509e9a8e8911ff0ec2025c))
+* **avm:** Add ECC ops to avm_proving_test ([#7058](https://github.com/AztecProtocol/aztec-packages/issues/7058)) ([7f62a90](https://github.com/AztecProtocol/aztec-packages/commit/7f62a901c848020058a58f6e772d495566416e0b))
+* **avm:** Cpp msm changes ([#7056](https://github.com/AztecProtocol/aztec-packages/issues/7056)) ([f9c8f20](https://github.com/AztecProtocol/aztec-packages/commit/f9c8f20f1bd6af0003960b19f61b737e3bad5f1e))
+* **avm:** Include bb-pilcom in monorepo ([#7098](https://github.com/AztecProtocol/aztec-packages/issues/7098)) ([0442158](https://github.com/AztecProtocol/aztec-packages/commit/044215814ac75df37c1d3ce3a6852b4ac49e6065))
+* Several updates in SMT verification module ([#7105](https://github.com/AztecProtocol/aztec-packages/issues/7105)) ([41b21f1](https://github.com/AztecProtocol/aztec-packages/commit/41b21f179ead617203c6d77b080e4f8b0065e06c))
+
+
+### Bug Fixes
+
+* **avm:** Re-enable ext call test ([#7147](https://github.com/AztecProtocol/aztec-packages/issues/7147)) ([33ccf1b](https://github.com/AztecProtocol/aztec-packages/commit/33ccf1b61260868e6bb027b7838ef530717bff01))
+* **avm:** Reenable tag error sload ([#7153](https://github.com/AztecProtocol/aztec-packages/issues/7153)) ([fd92d46](https://github.com/AztecProtocol/aztec-packages/commit/fd92d467eee51638b896852b789c8fae17e0689c))
+* Bug fixing bench prover test ([#7135](https://github.com/AztecProtocol/aztec-packages/issues/7135)) ([13678be](https://github.com/AztecProtocol/aztec-packages/commit/13678be4e1c76d20a804a04b0fa82f68aeca38ae)), closes [#7080](https://github.com/AztecProtocol/aztec-packages/issues/7080)
+* Fix bug for a unit test in full proving mode repated to MSM ([#7104](https://github.com/AztecProtocol/aztec-packages/issues/7104)) ([e37809b](https://github.com/AztecProtocol/aztec-packages/commit/e37809bdcdcf76f89f68403ee75aaf6d32c79a94))
+
+
+### Miscellaneous
+
+* **avm:** Remove avm prefix from pil and executor ([#7099](https://github.com/AztecProtocol/aztec-packages/issues/7099)) ([b502fcd](https://github.com/AztecProtocol/aztec-packages/commit/b502fcd500dcb10945b29d00f86e290bec63cce3))
+* **avm:** Renamings and comments ([#7128](https://github.com/AztecProtocol/aztec-packages/issues/7128)) ([ed2f98e](https://github.com/AztecProtocol/aztec-packages/commit/ed2f98ee9d7f540fbdfae09a0117bf22aaf6ebc7))
+* **avm:** Separate some fixed tables ([#7163](https://github.com/AztecProtocol/aztec-packages/issues/7163)) ([1d4a9a2](https://github.com/AztecProtocol/aztec-packages/commit/1d4a9a29ad37543aa0058bd43fa533f19a91e019))
+* Create workflow for full AVM tests ([#7051](https://github.com/AztecProtocol/aztec-packages/issues/7051)) ([a0b9c4b](https://github.com/AztecProtocol/aztec-packages/commit/a0b9c4b4383f448549c04567cd9c9264ce4240dc)), closes [#6643](https://github.com/AztecProtocol/aztec-packages/issues/6643)
+* Indirects and read/write slices ([#7082](https://github.com/AztecProtocol/aztec-packages/issues/7082)) ([d5e80ee](https://github.com/AztecProtocol/aztec-packages/commit/d5e80ee9b6298f7edf39b99ff51ae7cc26b8cbd8))
+* Reads the return data ([#6669](https://github.com/AztecProtocol/aztec-packages/issues/6669)) ([ef85542](https://github.com/AztecProtocol/aztec-packages/commit/ef8554268c175e6349474883c6072e3979fe45c0))
+* Remove unneeded public input folding ([#7094](https://github.com/AztecProtocol/aztec-packages/issues/7094)) ([c30dc38](https://github.com/AztecProtocol/aztec-packages/commit/c30dc3856cec038d8c53af34cf82e08b0cb456aa))
+* Take the PCS out of Zeromorph and refactor tests ([#7078](https://github.com/AztecProtocol/aztec-packages/issues/7078)) ([e192678](https://github.com/AztecProtocol/aztec-packages/commit/e19267872bae6fa2df258a1e363f1ba2f2f47922))
+* Ultra flavor cleanup ([#7070](https://github.com/AztecProtocol/aztec-packages/issues/7070)) ([77761c6](https://github.com/AztecProtocol/aztec-packages/commit/77761c670f2d516ab486de0f7bde036ff00ebd99))
+
 ## [0.43.0](https://github.com/AztecProtocol/aztec-packages/compare/barretenberg-v0.42.0...barretenberg-v0.43.0) (2024-06-18)
 
 
