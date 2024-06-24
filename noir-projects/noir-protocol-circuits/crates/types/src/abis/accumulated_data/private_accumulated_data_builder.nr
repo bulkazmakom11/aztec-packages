@@ -280,7 +280,10 @@ mod tests {
     },
         address::{AztecAddress, EthAddress}, messaging::l2_to_l1_message::L2ToL1Message,
         utils::arrays::array_eq,
-        constants::{DA_BYTES_PER_FIELD, DA_GAS_PER_BYTE, L2_GAS_PER_LOG_BYTE, L2_GAS_PER_NOTE_HASH, L2_GAS_PER_NULLIFIER}
+        constants::{
+        DA_BYTES_PER_FIELD, DA_GAS_PER_BYTE, L2_GAS_PER_LOG_BYTE, L2_GAS_PER_NOTE_HASH,
+        L2_GAS_PER_NULLIFIER, FIXED_AVM_STARTUP_L2_GAS
+    }
     };
 
     #[test]
@@ -483,6 +486,7 @@ mod tests {
             + 6 // revertible encrypted logs len
             + 10) // revertible unencrypted logs len
             * DA_GAS_PER_BYTE,
+            FIXED_AVM_STARTUP_L2_GAS +
            2 * L2_GAS_PER_NOTE_HASH + 2 * L2_GAS_PER_NULLIFIER + 16 * L2_GAS_PER_LOG_BYTE 
         )
             + Gas::new(42, 17)
@@ -493,12 +497,10 @@ mod tests {
             + 6 // non-revertible encrypted logs len
             + 10) // non-revertible unencrypted logs len
             * DA_GAS_PER_BYTE,
+            2 * FIXED_AVM_STARTUP_L2_GAS +
            2 * L2_GAS_PER_NOTE_HASH + 2 * L2_GAS_PER_NULLIFIER + 16 * L2_GAS_PER_LOG_BYTE 
         )
             + Gas::tx_overhead();
-
-        println(expected);
-        println(non_revertible.gas_used);
 
         assert_eq(non_revertible.gas_used, expected);
     }
