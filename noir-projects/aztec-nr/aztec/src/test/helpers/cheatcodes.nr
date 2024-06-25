@@ -1,6 +1,9 @@
-use dep::protocol_types::{abis::function_selector::FunctionSelector, address::{AztecAddress, PartialAddress}};
+use dep::protocol_types::{
+    abis::function_selector::FunctionSelector, address::{AztecAddress, PartialAddress},
+    constants::CONTRACT_INSTANCE_LENGTH, contract_instance::ContractInstance
+};
 use crate::context::inputs::{PublicContextInputs, PrivateContextInputs};
-use crate::test::helpers::types::{Deployer, TestAccount};
+use crate::test::helpers::utils::{Deployer, TestAccount};
 use crate::keys::public_keys::PublicKeys;
 
 unconstrained pub fn reset() {
@@ -31,20 +34,12 @@ unconstrained pub fn get_public_context_inputs() -> PublicContextInputs {
     oracle_get_public_context_inputs()
 }
 
-unconstrained pub fn deploy<N, M>(
-    path: str<N>,
-    initializer: str<M>,
-    args: [Field],
-    public_keys_hash: Field
-) -> AztecAddress {
-    oracle_deploy(path, initializer, args, public_keys_hash)
+unconstrained pub fn deploy<N, M>(path: str<N>, initializer: str<M>, args: [Field], public_keys_hash: Field) -> ContractInstance {
+    let instance_fields = oracle_deploy(path, initializer, args, public_keys_hash);
+    ContractInstance::deserialize(instance_fields)
 }
 
-unconstrained pub fn direct_storage_write<N>(
-    contract_address: AztecAddress,
-    storage_slot: Field,
-    fields: [Field; N]
-) {
+unconstrained pub fn direct_storage_write<N>(contract_address: AztecAddress, storage_slot: Field, fields: [Field; N]) {
     let _hash = direct_storage_write_oracle(contract_address, storage_slot, fields);
 }
 
@@ -70,6 +65,40 @@ unconstrained pub fn get_msg_sender() -> AztecAddress {
 
 unconstrained pub fn get_side_effects_counter() -> u32 {
     oracle_get_side_effects_counter()
+}
+
+unconstrained pub fn add_authwit(address: AztecAddress, message_hash: Field) {
+    orable_add_authwit(address, message_hash)
+}
+
+unconstrained pub fn assert_public_call_fails(target_address: AztecAddress, function_selector: FunctionSelector, args: [Field]) {
+    oracle_assert_public_call_fails(target_address, function_selector, args)
+}
+
+unconstrained pub fn assert_private_call_fails(
+    target_address: AztecAddress,
+    function_selector: FunctionSelector,
+    argsHash: Field,
+    sideEffectsCounter: Field,
+    isStaticCall: bool,
+    isDelegateCall: bool
+) {
+    oracle_assert_private_call_fails(
+        target_address,
+        function_selector,
+        argsHash,
+        sideEffectsCounter,
+        isStaticCall,
+        isDelegateCall
+    )
+}
+
+unconstrained pub fn add_nullifiers(contractAddress: AztecAddress, nullifiers: [Field]) {
+    oracle_add_nullifiers(contractAddress, nullifiers)
+}
+
+unconstrained pub fn add_note_hashes(contractAddress: AztecAddress, inner_note_hashes: [Field]) {
+    oracle_add_note_hashes(contractAddress, inner_note_hashes)
 }
 
 #[oracle(reset)]
@@ -99,7 +128,7 @@ fn oracle_deploy<N, M>(
     initializer: str<M>,
     args: [Field],
     public_keys_hash: Field
-) -> AztecAddress {}
+) -> [Field; CONTRACT_INSTANCE_LENGTH] {}
 
 #[oracle(directStorageWrite)]
 fn direct_storage_write_oracle<N>(
@@ -125,3 +154,30 @@ fn oracle_set_msg_sender(msg_sender: AztecAddress) {}
 
 #[oracle(getSideEffectsCounter)]
 fn oracle_get_side_effects_counter() -> u32 {}
+
+#[oracle(addAuthWitness)]
+fn orable_add_authwit(address: AztecAddress, message_hash: Field) {}
+
+#[oracle(assertPublicCallFails)]
+fn oracle_assert_public_call_fails(
+    target_address: AztecAddress,
+    function_selector: FunctionSelector,
+    args: [Field]
+) {}
+
+#[oracle(assertPrivateCallFails)]
+fn oracle_assert_private_call_fails(
+    target_address: AztecAddress,
+    function_selector: FunctionSelector,
+    argsHash: Field,
+    sideEffectsCounter: Field,
+    isStaticCall: bool,
+    isDelegateCall: bool
+) {}
+
+#[oracle(addNullifiers)]
+fn oracle_add_nullifiers(contractAddress: AztecAddress, nullifiers: [Field]) {}
+
+#[oracle(addNoteHashes)]
+fn oracle_add_note_hashes(contractAddress: AztecAddress, inner_note_hashes: [Field]) {}
+
