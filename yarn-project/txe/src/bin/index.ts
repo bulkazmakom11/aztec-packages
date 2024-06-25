@@ -7,10 +7,9 @@ import http from 'http';
 
 import { TXEService } from '../txe_service/txe_service.js';
 import { type ForeignCallResult, toForeignCallResult } from '../util/encoding.js';
+import { NoirCompiler } from '../util/noir_compiler.js';
 
 const { TXE_PORT = 8080 } = process.env;
-
-const logger = createDebugLogger('aztec:txe_service');
 
 const TXESessions = new Map<number, TXEService>();
 
@@ -25,7 +24,11 @@ type TXEForeignCallInput = {
 };
 
 class TXEDispatcher {
-  constructor(private logger: Logger) {}
+  private compiler: NoirCompiler;
+
+  constructor(private logger: Logger) {
+    this.compiler = new NoirCompiler(logger);
+  }
 
   // eslint-disable-next-line camelcase
   async resolve_foreign_call({
@@ -37,7 +40,7 @@ class TXEDispatcher {
 
     if (!TXESessions.has(sessionId) && functionName != 'reset') {
       this.logger.info(`Creating new session ${sessionId}`);
-      TXESessions.set(sessionId, await TXEService.init(logger));
+      TXESessions.set(sessionId, await TXEService.init(this.logger, this.compiler));
     }
 
     if (functionName === 'reset') {
@@ -73,8 +76,9 @@ export function startTXEHttpServer(dispatcher: TXEDispatcher, port: string | num
  * Create and start a new TXE HTTP Server
  */
 function main() {
-  logger.info(`Setting up TXE...`);
+  const logger = createDebugLogger('aztec:txe_service');
 
+  logger.info(`Setting up TXE...`);
   startTXEHttpServer(new TXEDispatcher(logger), TXE_PORT);
 
   logger.info(`TXE listening on port ${TXE_PORT}`);

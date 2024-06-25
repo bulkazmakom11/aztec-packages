@@ -28,12 +28,13 @@ import {
   toSingle,
 } from '../util/encoding.js';
 import { ExpectedFailureError } from '../util/expected_failure_error.js';
+import { NoirCompiler } from '../util/noir_compiler.js';
 import { TXEDatabase } from '../util/txe_database.js';
 
 export class TXEService {
-  constructor(private logger: Logger, private typedOracle: TypedOracle) {}
+  constructor(private logger: Logger, private typedOracle: TypedOracle, private compiler: NoirCompiler) {}
 
-  static async init(logger: Logger) {
+  static async init(logger: Logger, compiler: NoirCompiler) {
     const store = openTmpStore(true);
     const trees = await MerkleTrees.new(store, logger);
     const packedValuesCache = new PackedValuesCache();
@@ -42,7 +43,7 @@ export class TXEService {
     const txeDatabase = new TXEDatabase(store);
     logger.info(`TXE service initialized`);
     const txe = new TXE(logger, trees, packedValuesCache, noteCache, keyStore, txeDatabase);
-    const service = new TXEService(logger, txe);
+    const service = new TXEService(logger, txe, compiler);
     await service.timeTravel(toSingle(new Fr(1n)));
     return service;
   }
@@ -120,6 +121,7 @@ export class TXEService {
     this.logger.debug(
       `Deploy ${pathStr} with initializer ${initializerStr}(${decodedArgs}) and public keys hash ${publicKeysHashFr}`,
     );
+    await this.compiler.compile(pathStr);
     const contractModule = await import(pathStr);
     // Hacky way of getting the class, the name of the Artifact is always longer
     const contractClass = contractModule[Object.keys(contractModule).sort((a, b) => a.length - b.length)[0]];
