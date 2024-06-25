@@ -18,7 +18,7 @@ use noirc_frontend::{
 
 use super::ast_utils::is_custom_attribute;
 
-pub fn collect_crate_structs(crate_id: &CrateId, context: &HirContext) -> Vec<StructId> {
+pub(crate) fn collect_crate_structs(crate_id: &CrateId, context: &HirContext) -> Vec<StructId> {
     context
         .def_map(crate_id)
         .map(|def_map| {
@@ -39,7 +39,7 @@ pub fn collect_crate_structs(crate_id: &CrateId, context: &HirContext) -> Vec<St
         .unwrap_or_default()
 }
 
-pub fn collect_crate_functions(crate_id: &CrateId, context: &HirContext) -> Vec<FuncId> {
+pub(crate) fn collect_crate_functions(crate_id: &CrateId, context: &HirContext) -> Vec<FuncId> {
     context
         .def_map(crate_id)
         .expect("ICE: Missing crate in def_map")
@@ -49,7 +49,7 @@ pub fn collect_crate_functions(crate_id: &CrateId, context: &HirContext) -> Vec<
         .collect()
 }
 
-pub fn collect_traits(context: &HirContext) -> Vec<TraitId> {
+pub(crate) fn collect_traits(context: &HirContext) -> Vec<TraitId> {
     let crates = context.crates();
     crates
         .flat_map(|crate_id| context.def_map(&crate_id).map(|def_map| def_map.modules()))
@@ -67,7 +67,7 @@ pub fn collect_traits(context: &HirContext) -> Vec<TraitId> {
 }
 
 /// Computes the aztec signature for a resolved type.
-pub fn signature_of_type(typ: &Type) -> String {
+pub(crate) fn signature_of_type(typ: &Type) -> String {
     match typ {
         Type::Integer(ast::Signedness::Signed, bit_size) => format!("i{}", bit_size),
         Type::Integer(ast::Signedness::Unsigned, bit_size) => format!("u{}", bit_size),
@@ -106,7 +106,7 @@ pub fn signature_of_type(typ: &Type) -> String {
 
 // Fetches the name of all structs tagged as #[aztec(note)] in a given crate, avoiding
 // contract dependencies that are just there for their interfaces.
-pub fn fetch_crate_notes(
+pub(crate) fn fetch_crate_notes(
     context: &HirContext,
     crate_id: &CrateId,
 ) -> Vec<(String, Shared<StructType>)> {
@@ -139,11 +139,11 @@ pub fn fetch_crate_notes(
 }
 
 // Fetches the name of all structs tagged as #[aztec(note)], both in the current crate and all of its dependencies.
-pub fn fetch_notes(context: &HirContext) -> Vec<(String, Shared<StructType>)> {
+pub(crate) fn fetch_notes(context: &HirContext) -> Vec<(String, Shared<StructType>)> {
     context.crates().flat_map(|crate_id| fetch_crate_notes(context, &crate_id)).collect()
 }
 
-pub fn get_contract_module_data(
+pub(crate) fn get_contract_module_data(
     context: &mut HirContext,
     crate_id: &CrateId,
 ) -> Option<(String, LocalModuleId, FileId)> {
@@ -166,7 +166,7 @@ pub fn get_contract_module_data(
     Some(contract_module_file_ids[0].clone())
 }
 
-pub fn inject_fn(
+pub(crate) fn inject_fn(
     crate_id: &CrateId,
     context: &mut HirContext,
     func: ast::NoirFunction,
@@ -215,7 +215,7 @@ pub fn inject_fn(
     Ok(())
 }
 
-pub fn inject_global(
+pub(crate) fn inject_global(
     crate_id: &CrateId,
     context: &mut HirContext,
     global: ast::LetStatement,
@@ -255,7 +255,7 @@ pub fn inject_global(
     context.def_interner.replace_statement(statement_id, hir_stmt);
 }
 
-pub fn fully_qualified_note_path(context: &HirContext, note_id: StructId) -> Option<String> {
+pub(crate) fn fully_qualified_note_path(context: &HirContext, note_id: StructId) -> Option<String> {
     let module_id = note_id.module_id();
     let child_id = module_id.local_id.0;
     let def_map =
@@ -315,7 +315,7 @@ fn find_non_contract_dependencies_bfs(
         })
 }
 
-pub fn get_serialized_length(
+pub(crate) fn get_serialized_length(
     traits: &[TraitId],
     trait_name: &str,
     typ: &Type,
@@ -359,7 +359,7 @@ pub fn get_serialized_length(
     }
 }
 
-pub fn get_global_numberic_const(
+pub(crate) fn get_global_numberic_const(
     context: &HirContext,
     const_name: &str,
 ) -> Result<u128, MacroError> {
