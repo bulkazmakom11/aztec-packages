@@ -25,6 +25,8 @@ impl ProverBuilder for BBFiles {
         using Flavor = {name}Flavor;
         using FF = Flavor::FF;
         using PCS = Flavor::PCS;
+        using Curve = Flavor::Curve;
+        using ZeroMorph = ZeroMorphProver_<Curve>;
         using PCSCommitmentKey = Flavor::CommitmentKey;
         using ProvingKey = Flavor::ProvingKey;
         using Polynomial = Flavor::Polynomial;
@@ -63,8 +65,6 @@ impl ProverBuilder for BBFiles {
         SumcheckOutput<Flavor> sumcheck_output;
     
         std::shared_ptr<PCSCommitmentKey> commitment_key;
-    
-        using ZeroMorph = ZeroMorphProver_<PCS>;
     
       private:
         HonkProof proof;
