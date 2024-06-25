@@ -1,4 +1,5 @@
 import { Fr } from '@aztec/foundation/fields';
+import { createDebugLogger } from '@aztec/foundation/log';
 
 import {
   type TracedContractInstance,
@@ -13,6 +14,7 @@ import {
 } from './trace_types.js';
 
 export class WorldStateAccessTrace {
+  public logger = createDebugLogger('aztec:side-effects');
   public accessCounter: number;
 
   public publicStorageReads: TracedPublicStorageRead[] = [];
@@ -52,6 +54,7 @@ export class WorldStateAccessTrace {
       //  endLifetime: Fr.ZERO,
     };
     this.publicStorageReads.push(traced);
+    this.logger.debug(`SLOAD cnt: ${this.accessCounter} val: ${value} slot: ${slot}`);
     this.incrementAccessCounter();
   }
 
@@ -67,6 +70,8 @@ export class WorldStateAccessTrace {
       //  endLifetime: Fr.ZERO,
     };
     this.publicStorageWrites.push(traced);
+    this.logger.debug(`SSTORE cnt: ${this.accessCounter} val: ${value} slot: ${slot}`);
+
     this.incrementAccessCounter();
   }
 
@@ -80,6 +85,8 @@ export class WorldStateAccessTrace {
       // endLifetime: Fr.ZERO,
       leafIndex,
     };
+    this.logger.debug(`NOTE_HASH_CHECK cnt: ${this.accessCounter}`);
+
     this.noteHashChecks.push(traced);
     this.incrementAccessCounter();
   }
@@ -93,6 +100,8 @@ export class WorldStateAccessTrace {
       counter: new Fr(this.accessCounter),
       //  endLifetime: Fr.ZERO,
     };
+    this.logger.debug(`NEW_NOTE_HASH cnt: ${this.accessCounter}`);
+
     this.newNoteHashes.push(traced);
     this.incrementAccessCounter();
   }
@@ -109,6 +118,8 @@ export class WorldStateAccessTrace {
       isPending,
       leafIndex,
     };
+    this.logger.debug(`NULLIFIER_EXISTS cnt: ${this.accessCounter}`);
+
     this.nullifierChecks.push(traced);
     this.incrementAccessCounter();
   }
@@ -122,6 +133,8 @@ export class WorldStateAccessTrace {
       counter: new Fr(this.accessCounter),
       // endLifetime: Fr.ZERO,
     };
+    this.logger.debug(`NEW_NULLIFIER cnt: ${this.accessCounter}`);
+
     this.newNullifiers.push(tracedNullifier);
     this.incrementAccessCounter();
   }
@@ -136,6 +149,8 @@ export class WorldStateAccessTrace {
       counter: new Fr(this.accessCounter),
       //endLifetime: Fr.ZERO, // FIXME
     };
+    this.logger.debug(`L1_TO_L2_MSG_CHECK cnt: ${this.accessCounter}`);
+
     this.l1ToL2MessageChecks.push(traced);
     this.incrementAccessCounter();
   }
@@ -145,12 +160,16 @@ export class WorldStateAccessTrace {
       logHash,
       counter: new Fr(this.accessCounter),
     };
+    this.logger.debug(`NEW_UNENCRYPTED_LOG cnt: ${this.accessCounter}`);
+
     this.newLogsHashes.push(traced);
     this.incrementAccessCounter();
   }
 
   public traceGetContractInstance(instance: TracedContractInstance) {
     this.gotContractInstances.push(instance);
+    this.logger.debug(`CONTRACT_INSTANCE cnt: ${this.accessCounter}`);
+
     this.incrementAccessCounter();
   }
 
